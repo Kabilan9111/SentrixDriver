@@ -1,0 +1,969 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentrix Drive | Ultra Premium Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        base: '#04070e',        /* Ultra deep matte navy/black */
+                        panel: '#09101d',       /* Slightly lighter for panels */
+                        panelHover: '#0e1726',
+                        borderSubtle: '#1a2333',
+                        primary: '#1463FF',     /* Vibrant tech blue */
+                        secondary: '#00E676',   /* Alert Green */
+                        danger: '#FF3B30',      /* Critical Red */
+                        warning: '#FF9500',     /* Orange */
+                        purple: '#A855F7',      /* Map polygon edge / driver score */
+                        textMain: '#F8FAFC',
+                        textMuted: '#64748B',
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['Roboto Mono', 'SF Mono', 'monospace'],
+                    },
+                    boxShadow: {
+                        'neon-blue': '0 0 15px rgba(20, 99, 255, 0.4)',
+                        'neon-red': '0 0 15px rgba(255, 59, 48, 0.3)',
+                        'neon-green': '0 0 15px rgba(0, 230, 118, 0.2)',
+                        'panel': '0 8px 30px rgba(0, 0, 0, 0.5)',
+                    }
+                }
+            }
+        }
+    </script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #04070e; 
+            color: #F8FAFC; 
+            overflow: hidden; /* App-like full screen */
+        }
+
+        /* Generic Panel */
+        .glass-panel {
+            background-color: #09101d;
+            border: 1px solid #1a2333;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+
+        /* Scrollbars (hidden for clean UI) */
+        ::-webkit-scrollbar { width: 0px; height: 0px; }
+
+        /* Typography */
+        .header-xs { font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: #64748B; font-weight: 600; }
+        .text-xxs { font-size: 9px; }
+
+        /* SVG animations */
+        .pulse { animation: pulseAnim 2s infinite; }
+        @keyframes pulseAnim {
+            0% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 0; }
+        }
+
+        /* Map styling */
+        .map-bg {
+            background-image: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?w=1200&q=80');
+            background-size: cover;
+            background-position: center;
+            filter: grayscale(1) invert(1) brightness(0.15) contrast(1.5) sepia(0.2) hue-rotate(180deg);
+        }
+    </style>
+</head>
+<body class="flex h-screen w-screen text-sm antialiased selection:bg-primary selection:text-white">
+
+    <!-- ==========================================
+         LEFT SIDEBAR
+         ========================================== -->
+    <aside class="w-[220px] flex-shrink-0 flex flex-col bg-panel border-r border-borderSubtle z-20">
+        
+        <!-- Logo -->
+        <div class="h-[68px] flex items-center px-5 border-b border-borderSubtle shrink-0">
+            <div class="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-neon-blue font-serif relative overflow-hidden">
+                S<div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
+            </div>
+            <div class="ml-3">
+                <div class="font-bold text-sm tracking-wide">SENTRIX DRIVE</div>
+                <div class="text-[9px] text-textMuted uppercase tracking-wider">AI Fleet Intelligence</div>
+            </div>
+        </div>
+
+        <!-- Navigation Menu -->
+        <div class="flex-1 overflow-y-auto py-5 flex flex-col gap-1 px-3">
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20 transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-house w-4 text-center"></i> Overview
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-satellite-dish w-4 text-center"></i> Live Tracking
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-microchip w-4 text-center"></i> Driver Intelligence
+            </a>
+             <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-shield-halved w-4 text-center"></i> Alerts & Incidents
+                <span class="ml-auto bg-danger/20 text-danger text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">12</span>
+            </a>
+             <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-draw-polygon w-4 text-center"></i> Geofencing
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-car-battery w-4 text-center"></i> Vehicle Health
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-wrench w-4 text-center"></i> Maintenance
+            </a>
+            <div class="h-4"></div>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-chart-line w-4 text-center"></i> Analytics & Reports
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-id-card w-4 text-center"></i> Drivers
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-route w-4 text-center"></i> Trips
+            </a>
+            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
+                <i class="fa-solid fa-gear w-4 text-center"></i> Settings
+            </a>
+        </div>
+
+        <!-- Fleet Status Bottom Widget -->
+        <div class="mt-auto px-5 py-4 border-t border-borderSubtle">
+            <h3 class="header-xs mb-3">FLEET STATUS</h3>
+            <div class="flex items-center justify-between mb-4">
+                <div>
+                    <div class="text-[10px] text-textMuted">Total Vehicles</div>
+                    <div class="text-xl font-bold">1,250</div>
+                </div>
+                <!-- SVG Donut -->
+                <div class="relative w-10 h-10">
+                    <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="#1a2333" stroke-width="4"></circle>
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="#1463FF" stroke-width="4" stroke-dasharray="40 100" stroke-dashoffset="0"></circle>
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="#FF9500" stroke-width="4" stroke-dasharray="30 100" stroke-dashoffset="-40"></circle>
+                        <circle cx="18" cy="18" r="16" fill="none" stroke="#FF3B30" stroke-width="4" stroke-dasharray="20 100" stroke-dashoffset="-70"></circle>
+                    </svg>
+                </div>
+            </div>
+            
+            <div class="space-y-1.5">
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 text-textMuted"><div class="w-1.5 h-1.5 rounded-full bg-secondary"></div> Moving</div>
+                    <span class="font-mono">592</span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 text-textMuted"><div class="w-1.5 h-1.5 rounded-full bg-primary"></div> Idle</div>
+                    <span class="font-mono">230</span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 text-textMuted"><div class="w-1.5 h-1.5 rounded-full bg-warning"></div> Stopped</div>
+                    <span class="font-mono">218</span>
+                </div>
+                <div class="flex items-center justify-between text-xs">
+                    <div class="flex items-center gap-2 text-textMuted"><div class="w-1.5 h-1.5 rounded-full bg-danger"></div> Offline</div>
+                    <span class="font-mono">210</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="px-5 py-4 border-t border-borderSubtle flex items-center justify-between">
+            <div class="flex items-center gap-2">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rohit" class="w-7 h-7 rounded-sm">
+                <div>
+                    <div class="text-[11px] font-semibold text-white">Rohit Mehta</div>
+                    <div class="text-[9px] text-textMuted">Fleet Admin</div>
+                </div>
+            </div>
+            <i class="fa-solid fa-chevron-right text-[10px] text-textMuted"></i>
+        </div>
+
+        <div class="px-5 pb-4 text-textxxs text-textMuted">
+            Sentrix Drive v2.4.1<br>© 2026 Sentrix AI
+        </div>
+    </aside>
+
+    <!-- ==========================================
+         MIDDLE COLUMN (Main Content)
+         ========================================== -->
+    <div class="flex-1 flex flex-col min-w-0 bg-base relative z-10">
+        
+        <!-- TOP NAVBAR -->
+        <header class="h-[68px] border-b border-borderSubtle flex items-center justify-between px-6 shrink-0 bg-base w-full">
+            <div class="flex items-center gap-4">
+                <div class="bg-panel border border-borderSubtle px-3 py-1.5 rounded flex items-center gap-2 w-64 focus-within:border-primary/50 transition-colors">
+                    <i class="fa-solid fa-magnifying-glass text-textMuted text-xs"></i>
+                    <input type="text" placeholder="Search vehicles, drivers, zones, alerts..." class="bg-transparent border-none outline-none text-xs text-textMain w-full placeholder-textMuted">
+                    <span class="text-textxxs text-textMuted font-mono">⌘ K</span>
+                </div>
+            </div>
+
+            <div class="flex items-center gap-6">
+                <!-- System Status Wave (Simulated) -->
+                <div class="flex items-center gap-2">
+                    <div class="flex flex-col items-end">
+                        <div class="text-[10px] text-textMuted">AI System</div>
+                        <div class="text-[11px] text-secondary font-semibold">Operational</div>
+                    </div>
+                    <svg width="40" height="20" viewBox="0 0 40 20" class="stroke-secondary fill-none stroke-[1.5px]">
+                        <path d="M0,10 L5,10 L8,5 L12,15 L16,2 L20,18 L24,8 L28,12 L32,10 L40,10" class="opacity-80" />
+                    </svg>
+                </div>
+
+                <div class="h-6 w-px bg-borderSubtle"></div>
+
+                <!-- Notifications -->
+                <button class="relative text-textMuted hover:text-white transition-colors">
+                    <i class="fa-regular fa-bell"></i>
+                    <span class="absolute -top-1 -right-1 w-3.5 h-3.5 bg-danger text-white text-[8px] flex items-center justify-center rounded-full border-2 border-base">12</span>
+                </button>
+
+                <button class="text-textMuted hover:text-white transition-colors">
+                    <i class="fa-solid fa-gear"></i>
+                </button>
+
+                <div class="flex items-center gap-2 pl-2">
+                    <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-8 h-8 rounded border border-borderSubtle">
+                    <div class="text-left hidden md:block">
+                        <div class="text-[11px] font-semibold text-white">Rohit Mehta</div>
+                        <div class="text-[9px] text-textMuted">Fleet Admin</div>
+                    </div>
+                    <i class="fa-solid fa-chevron-down text-[9px] text-textMuted ml-1"></i>
+                </div>
+            </div>
+        </header>
+
+        <!-- MAIN SCROLLABLE CONTENT -->
+        <main class="flex-1 overflow-y-auto p-4 flex flex-col gap-4 relative pb-[120px]">
+            
+            <!-- TOP METRIC CARDS -->
+            <div class="grid grid-cols-5 gap-4">
+                <!-- Total Vehicles -->
+                <div class="glass-panel p-4 pb-3 flex flex-col justify-between relative overflow-hidden">
+                    <div class="absolute right-0 top-0 w-20 h-20 bg-primary/10 rounded-full blur-2xl"></div>
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="header-xs text-white/70">TOTAL VEHICLES</span>
+                        <div class="w-8 h-8 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shadow-neon-blue">
+                            <i class="fa-solid fa-car"></i>
+                        </div>
+                    </div>
+                    <div class="flex justify-between items-end">
+                        <div>
+                            <div class="text-3xl font-bold text-white mb-1 tracking-tight">1,250</div>
+                            <div class="text-[10px] text-secondary font-medium"><i class="fa-solid fa-arrow-trend-up"></i> 12.5% <span class="text-textMuted font-normal">vs last month</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Trips -->
+                <div class="glass-panel p-4 pb-3 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="header-xs text-white/70">LIVE TRIPS</span>
+                        <div class="w-8 h-8 rounded-full bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary shadow-neon-green">
+                            <i class="fa-solid fa-route"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-white mb-1 tracking-tight">342</div>
+                        <div class="text-[10px] text-textMuted">Across 18 zones</div>
+                    </div>
+                </div>
+
+                <!-- AI Alerts -->
+                <div class="glass-panel p-4 pb-3 flex flex-col justify-between relative overflow-hidden text-danger">
+                    <div class="absolute right-0 top-0 w-20 h-20 bg-danger/10 rounded-full blur-2xl"></div>
+                    <div class="flex justify-between items-start mb-6 relative z-10">
+                        <span class="header-xs text-white/70 text-white">AI ALERTS</span>
+                        <div class="w-8 h-8 rounded-full bg-danger/10 border border-danger/30 flex items-center justify-center text-danger shadow-neon-red">
+                            <i class="fa-solid fa-triangle-exclamation"></i>
+                        </div>
+                    </div>
+                    <div class="relative z-10">
+                        <div class="text-3xl font-bold text-white mb-1 tracking-tight">12</div>
+                        <div class="text-[10px] text-textMuted font-medium text-danger/80">3 Critical • 9 Warning</div>
+                    </div>
+                </div>
+
+                <!-- Driver Score -->
+                <div class="glass-panel p-4 pb-3 flex flex-col justify-between">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="header-xs text-white/70">DRIVER SCORE (AVG.)</span>
+                        <!-- Purple Ring SVG -->
+                        <div class="w-8 h-8 relative">
+                            <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                <circle cx="18" cy="18" r="16" fill="none" stroke="#1a2333" stroke-width="4"></circle>
+                                <circle cx="18" cy="18" r="16" fill="none" stroke="#A855F7" stroke-width="4" stroke-dasharray="86 100" style="filter: drop-shadow(0 0 3px #A855F7)"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-white mb-1 tracking-tight">86<span class="text-sm text-textMuted">/100</span></div>
+                        <div class="text-[10px] text-secondary"><i class="fa-solid fa-arrow-trend-up"></i> 8.2 pts <span class="text-textMuted">vs last month</span></div>
+                    </div>
+                </div>
+
+                <!-- Fleet Health -->
+                <div class="glass-panel p-4 pb-3 flex flex-col justify-between bg-panel">
+                    <div class="flex justify-between items-start mb-6">
+                        <span class="header-xs text-white/70">FLEET HEALTH</span>
+                        <div class="w-8 h-8 rounded-full bg-secondary/10 border border-secondary/20 flex items-center justify-center text-secondary shadow-neon-green">
+                            <i class="fa-solid fa-heart-pulse"></i>
+                        </div>
+                    </div>
+                    <div>
+                        <div class="text-3xl font-bold text-white mb-1 tracking-tight text-secondary">98.2<span class="text-xl">%</span></div>
+                        <div class="text-[10px] text-secondary">Excellent</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- MAIN HERO ROW: MAP + ALERTS -->
+            <div class="grid grid-cols-3 gap-4 h-[440px]">
+                
+                <!-- MAP SECTION -->
+                <div class="col-span-2 glass-panel flex flex-col overflow-hidden relative border-borderSubtle">
+                    <!-- Header inside map absolute -->
+                    <div class="absolute top-4 left-4 right-4 z-10 flex justify-between items-center pointer-events-none">
+                        <div class="flex items-center gap-3">
+                            <span class="header-xs text-white">LIVE FLEET MAP</span>
+                            <div class="flex items-center gap-1.5 text-[9px] bg-secondary/10 border border-secondary/20 text-secondary px-2 py-0.5 rounded-full font-mono">
+                                <div class="w-1.5 h-1.5 rounded-full bg-secondary pulse"></div> Live
+                            </div>
+                        </div>
+                        
+                        <div class="flex gap-2 pointer-events-auto">
+                            <button class="bg-black/50 border border-borderSubtle backdrop-blur px-3 py-1.5 rounded text-[11px] flex items-center gap-2 hover:bg-white/10 transition-colors">
+                                All Vehicles <i class="fa-solid fa-chevron-down text-[9px]"></i>
+                            </button>
+                            <button class="bg-black/50 border border-borderSubtle backdrop-blur px-3 py-1.5 rounded text-[11px] flex items-center gap-2 hover:bg-white/10 transition-colors">
+                                <i class="fa-solid fa-layer-group"></i> Layers
+                            </button>
+                            <button class="w-8 h-8 bg-black/50 border border-borderSubtle backdrop-blur rounded flex items-center justify-center hover:bg-white/10 transition-colors">
+                                <i class="fa-solid fa-expand text-[10px]"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Left Map Tools absolute -->
+                    <div class="absolute left-4 top-16 z-10 flex flex-col gap-1 pointer-events-auto shadow-[0_0_15px_rgba(0,0,0,0.5)]">
+                        <button class="w-7 h-7 bg-black/70 backdrop-blur border border-borderSubtle rounded-t flex items-center justify-center hover:bg-white/10"><i class="fa-solid fa-plus text-[10px]"></i></button>
+                        <button class="w-7 h-7 bg-black/70 backdrop-blur border-l border-r border-b border-borderSubtle border-t-0 flex items-center justify-center hover:bg-white/10"><i class="fa-solid fa-minus text-[10px]"></i></button>
+                        <div class="h-2"></div>
+                        <button class="w-7 h-7 bg-black/70 backdrop-blur border border-borderSubtle rounded flex items-center justify-center hover:bg-white/10"><i class="fa-solid fa-location-crosshairs text-[10px]"></i></button>
+                        <button class="w-7 h-7 bg-black/70 backdrop-blur border border-borderSubtle rounded flex items-center justify-center hover:bg-white/10 mt-1"><i class="fa-solid fa-draw-polygon text-[10px]"></i></button>
+                    </div>
+
+                    <!-- MAP BACKGROUND (Mumbai context from prompt/image) -->
+                    <div class="absolute inset-0 z-0 bg-[#04070e]">
+                        <div class="absolute inset-0 map-bg opacity-40"></div>
+                        
+                        <!-- Map Grid / Overlay -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-base via-transparent to-base opacity-70"></div>
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/80 to-transparent h-20"></div>
+                        
+                        <!-- Place Labels (Simulated) -->
+                        <span class="absolute top-[18%] left-[30%] text-[9px] text-textMuted font-mono">Goregaon</span>
+                        <span class="absolute top-[12%] left-[45%] text-[9px] text-textMuted font-mono">Andheri East</span>
+                        <span class="absolute top-[35%] left-[55%] text-[9px] text-textMuted font-mono">Powai Lake</span>
+                        <span class="absolute top-[65%] left-[65%] text-[9px] text-textMuted font-mono">Navi Mumbai</span>
+                        <span class="absolute top-[35%] left-[30%] text-[9px] text-textMuted font-mono">Thane</span>
+                        
+                        <!-- SVG Paths (Routes & Polygons) -->
+                        <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 440">
+                            <!-- Blue glowing route 1 -->
+                            <path d="M 120,280 Q 200,320 280,380 L 350,400 L 450,380 L 520,320" fill="none" stroke="rgba(20,99,255,0.6)" stroke-width="2" class="drop-shadow-[0_0_8px_rgba(20,99,255,0.8)]" />
+                            <!-- Green active route 2 -->
+                            <path d="M 280,100 L 350,80 L 420,130 L 400,230 L 300,320" fill="none" stroke="rgba(0,230,118,0.5)" stroke-width="2" stroke-dasharray="4,4" class="drop-shadow-[0_0_8px_rgba(0,230,118,0.6)]" />
+                            
+                            <!-- Geofences -->
+                            <!-- Blue -->
+                            <polygon points="120,150 250,130 280,280 100,250" fill="rgba(20,99,255,0.05)" stroke="rgba(20,99,255,0.4)" stroke-width="1" stroke-dasharray="2,2"/>
+                            <!-- Purple polygon -->
+                            <polygon points="450,100 620,110 580,250 420,200" fill="rgba(168,85,247,0.05)" stroke="rgba(168,85,247,0.5)" stroke-width="1" stroke-dasharray="2,4"/>
+                            <!-- Red restricted zone polygon -->
+                            <polygon points="550,280 700,260 720,380 500,380" fill="rgba(255,59,48,0.05)" stroke="rgba(255,59,48,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
+                        </svg>
+
+                        <!-- Nodes on Map -->
+                        <!-- Primary Node (Matches the popup) -->
+                        <div class="absolute top-[215px] left-[295px] z-20">
+                            <!-- Node dot -->
+                            <div class="w-3 h-3 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.9)] border-2 border-primary pulse flex items-center justify-center"></div>
+                            
+                            <!-- Tooltip Modal -->
+                            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-panel/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.8)] w-[240px] p-4 text-xs z-30 transform hover:-translate-y-1 transition-transform">
+                                <div class="flex justify-between items-start mb-3 border-b border-white/5 pb-2">
+                                    <div>
+                                        <div class="font-bold text-white tracking-wide">MH01 AB 1234</div>
+                                        <div class="text-[9px] text-textMuted">Speed <span class="text-gray-300 font-mono ml-2">72 km/h</span></div>
+                                    </div>
+                                    <div class="text-[9px] text-secondary bg-secondary/10 px-1.5 py-0.5 rounded border border-secondary/20 flex items-center gap-1"><i class="fa-solid fa-arrow-right"></i> Moving</div>
+                                </div>
+                                <div class="space-y-1.5 mb-3">
+                                    <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Driver</span> <span class="text-white">Arjun Verma</span></div>
+                                    <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Battery</span> <span class="text-secondary font-mono">91%</span></div>
+                                    <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Fuel</span> <span class="text-secondary font-mono">68%</span></div>
+                                    <div class="flex items-start text-[10px]"><span class="w-12 text-textMuted shrink-0">Location</span> <span class="text-gray-300 leading-tight">Eastern Express Hwy, Mumbai</span></div>
+                                </div>
+                                <!-- Tiny car image area -->
+                                <div class="absolute right-3 top-10 w-[60px] h-10 opacity-70">
+                                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover rounded pointer-events-none mix-blend-screen grayscale filter">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Other nodes -->
+                        <div class="absolute top-[80px] left-[350px] w-2.5 h-2.5 bg-secondary rounded-full shadow-[0_0_10px_rgba(0,230,118,0.5)] z-10 border border-[#04070e]"></div>
+                        <div class="absolute top-[130px] left-[520px] w-2.5 h-2.5 bg-secondary rounded-full shadow-[0_0_10px_rgba(0,230,118,0.5)] z-10 border border-[#04070e]"></div>
+                        <div class="absolute top-[380px] left-[280px] w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(20,99,255,0.5)] z-10 border border-[#04070e]"></div>
+                        <div class="absolute top-[320px] left-[520px] w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(20,99,255,0.5)] z-10 border border-[#04070e]"></div>
+                        <div class="absolute top-[400px] left-[350px] w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(20,99,255,0.5)] z-10 border border-[#04070e]"></div>
+                        
+                        <!-- Offline node -->
+                        <div class="absolute top-[280px] left-[150px] w-2.5 h-2.5 bg-gray-500 rounded-full z-10 border border-[#04070e]"></div>
+                    </div>
+
+                    <!-- Bottom Legend absolute -->
+                    <div class="absolute bottom-4 left-4 right-4 z-10 pointer-events-none flex justify-between items-center text-[10px]">
+                        <div class="flex gap-4">
+                            <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-secondary shadow-[0_0_5px_rgba(0,230,118,0.8)]"></div> <span class="text-gray-300">Moving (592)</span></div>
+                            <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_5px_rgba(20,99,255,0.8)]"></div> <span class="text-gray-300">Idle (230)</span></div>
+                            <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-warning shadow-[0_0_5px_rgba(255,149,0,0.8)]"></div> <span class="text-gray-300">Stopped (218)</span></div>
+                            <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-gray-500"></div> <span class="text-gray-300">Offline (210)</span></div>
+                        </div>
+                        <div class="flex gap-4">
+                            <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-purple shadow-[0_0_5px_rgba(168,85,247,0.8)]"></div> <span class="text-gray-300">Geofence</span></div>
+                            <div class="flex items-center gap-1.5"><div class="w-1.5 h-1.5 rounded-full bg-danger shadow-[0_0_5px_rgba(255,59,48,0.8)]"></div> <span class="text-gray-300">Restricted Zone</span></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ALERTS SECTION -->
+                <div class="col-span-1 glass-panel flex flex-col p-4 border-borderSubtle">
+                    <div class="flex justify-between items-center mb-4">
+                        <span class="header-xs text-white">AI ALERTS</span>
+                        <a href="#" class="text-[10px] text-primary hover:text-white transition-colors">View All</a>
+                    </div>
+                    
+                    <div class="flex-1 flex flex-col gap-2 overflow-y-auto">
+                        
+                        <!-- Alert 1 RED -->
+                        <div class="bg-[#0e1625] border border-borderSubtle p-3 rounded-lg hover:border-danger/30 transition-colors cursor-pointer flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-sm bg-danger/10 border border-danger/20 flex items-center justify-center text-danger shrink-0 mt-0.5">
+                                <i class="fa-solid fa-eye-low-vision text-[10px]"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <div class="text-[11px] font-bold text-white mb-0.5 truncate">Drowsiness Detected</div>
+                                    <span class="text-[8px] text-danger font-bold uppercase tracking-wider">CRITICAL</span>
+                                </div>
+                                <div class="text-[10px] text-textMuted mb-0.5 truncate">MH01 AB 1234 • Arjun Verma</div>
+                                <div class="text-[9px] text-gray-500 font-mono">10:24 AM • Powai, Mumbai</div>
+                            </div>
+                        </div>
+
+                        <!-- Alert 2 ORANGE -->
+                        <div class="bg-[#0e1625] border border-borderSubtle p-3 rounded-lg hover:border-warning/30 transition-colors cursor-pointer flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-sm bg-warning/10 border border-warning/20 flex items-center justify-center text-warning shrink-0 mt-0.5">
+                                <i class="fa-solid fa-route text-[10px]"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <div class="text-[11px] font-bold text-white mb-0.5 truncate">Route Deviation</div>
+                                    <span class="text-[8px] text-warning font-bold uppercase tracking-wider">WARNING</span>
+                                </div>
+                                <div class="text-[10px] text-textMuted mb-0.5 truncate">MH02 CD 5678 • Neha Singh</div>
+                                <div class="text-[9px] text-gray-500 font-mono">10:21 AM • Thane West</div>
+                            </div>
+                        </div>
+
+                        <!-- Alert 3 RED -->
+                        <div class="bg-[#0e1625] border border-borderSubtle p-3 rounded-lg hover:border-danger/30 transition-colors cursor-pointer flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-sm bg-danger/10 border border-danger/20 flex items-center justify-center text-danger shrink-0 mt-0.5">
+                                <i class="fa-solid fa-map-pin text-[10px]"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <div class="text-[11px] font-bold text-white mb-0.5 truncate">Geofence Breach</div>
+                                    <span class="text-[8px] text-danger font-bold uppercase tracking-wider">CRITICAL</span>
+                                </div>
+                                <div class="text-[10px] text-textMuted mb-0.5 truncate">MH03 EF 9012 • Vivek Patel</div>
+                                <div class="text-[9px] text-gray-500 font-mono">10:18 AM • Restricted Zone</div>
+                            </div>
+                        </div>
+
+                        <!-- Alert 4 BLUE -->
+                        <div class="bg-[#0e1625] border border-borderSubtle p-3 rounded-lg hover:border-primary/30 transition-colors cursor-pointer flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-sm bg-primary/10 border border-primary/20 flex items-center justify-center text-primary shrink-0 mt-0.5">
+                                <i class="fa-solid fa-circle-exclamation text-[10px]"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <div class="text-[11px] font-bold text-white mb-0.5 truncate">Harsh Braking</div>
+                                    <span class="text-[8px] text-primary font-bold uppercase tracking-wider">INFO</span>
+                                </div>
+                                <div class="text-[10px] text-textMuted mb-0.5 truncate">MH04 GH 3456 • Karan Mehta</div>
+                                <div class="text-[9px] text-gray-500 font-mono">10:15 AM • Sion, Mumbai</div>
+                            </div>
+                        </div>
+
+                        <!-- Alert 5 ORANGE -->
+                        <div class="bg-[#0e1625] border border-borderSubtle p-3 rounded-lg hover:border-warning/30 transition-colors cursor-pointer flex items-start gap-3">
+                            <div class="w-7 h-7 rounded-sm bg-warning/10 border border-warning/20 flex items-center justify-center text-warning shrink-0 mt-0.5">
+                                <i class="fa-solid fa-gauge-high text-[10px]"></i>
+                            </div>
+                            <div class="flex-1 min-w-0">
+                                <div class="flex justify-between items-start">
+                                    <div class="text-[11px] font-bold text-white mb-0.5 truncate">Overspeed Detected</div>
+                                    <span class="text-[8px] text-warning font-bold uppercase tracking-wider">WARNING</span>
+                                </div>
+                                <div class="text-[10px] text-textMuted mb-0.5 truncate">MH05 IJ 7890 • Rohit Sharma</div>
+                                <div class="text-[9px] text-gray-500 font-mono">10:11 AM • 85 km/h in 60 zone</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- LOWER DIAGNOSTICS ROW -->
+            <div class="grid grid-cols-3 gap-4 h-[220px]">
+                
+                <!-- Driver Monitoring -->
+                <div class="glass-panel flex flex-col p-4 border-borderSubtle">
+                    <span class="header-xs text-white mb-3 flex items-center gap-2">DRIVER MONITORING <span class="lowercase text-secondary bg-secondary/10 px-1 py-0.5 rounded text-[8px] border border-secondary/20">(live)</span></span>
+                    
+                    <div class="flex gap-4 flex-1">
+                        <!-- Camera feed simulated -->
+                        <div class="w-[120px] bg-black rounded-lg overflow-hidden border border-white/5 relative">
+                            <img src="https://images.unsplash.com/photo-1541701494587-cb58502866ab?auto=format&fit=crop&w=300&q=80" class="w-full h-full object-cover filter brightness-75 contrast-125 sepia-[.1] hue-rotate-[180deg]">
+                            <!-- Face mesh -->
+                            <div class="absolute top-[20%] left-1/2 -translate-x-1/2 w-12 h-16 border border-secondary/80 rounded-sm">
+                                <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-10 h-10 border border-secondary/30 rounded-full"></div>
+                                <div class="absolute inset-0 bg-secondary/10 pointer-events-none"></div>
+                            </div>
+                        </div>
+                        
+                        <div class="flex-1 flex flex-col justify-center space-y-3">
+                            <div>
+                                <div class="flex justify-between items-end mb-1 text-[10px]">
+                                    <span class="text-textMuted">Drowsiness</span>
+                                    <span class="text-secondary font-mono">18%</span>
+                                </div>
+                                <div class="w-full h-1 bg-surface/50 rounded-full overflow-hidden"><div class="h-full bg-secondary w-[18%]"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-1 text-[10px]">
+                                    <span class="text-textMuted">Attention</span>
+                                    <span class="text-secondary font-mono">82%</span>
+                                </div>
+                                <div class="w-full h-1 bg-surface/50 rounded-full overflow-hidden"><div class="h-full bg-secondary w-[82%]"></div></div>
+                            </div>
+                            <div>
+                                <div class="flex justify-between items-end mb-1 text-[10px]">
+                                    <span class="text-textMuted">Distraction</span>
+                                    <span class="text-secondary font-mono">12%</span>
+                                </div>
+                                <div class="w-full h-1 bg-surface/50 rounded-full overflow-hidden"><div class="h-full bg-secondary w-[12%]"></div></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <button class="w-full py-2 mt-3 text-[10px] text-textMuted hover:text-white bg-white/5 hover:bg-white/10 rounded border border-white/5 transition-colors flex items-center justify-center gap-2">
+                        Open Driver Intelligence <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Vehicle Health -->
+                <div class="glass-panel flex flex-col p-4 border-borderSubtle relative">
+                    <span class="header-xs text-white mb-3">VEHICLE HEALTH OVERVIEW</span>
+                    <div class="flex-1 flex items-center relative gap-2">
+                        <div class="w-[140px] shrink-0 h-full relative flex items-center">
+                             <!-- Using a generic dark SUV image -->
+                            <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&w=400&q=80" 
+                                 class="w-full object-contain filter drop-shadow-[0_0_15px_rgba(20,99,255,0.2)] mix-blend-screen grayscale brightness-75">
+                        </div>
+                        <div class="flex-1 flex flex-col gap-2 relative z-10 pl-2">
+                            <div class="flex justify-between items-center text-[10px] bg-white/5 px-2 py-1.5 rounded border border-white/5">
+                                <span class="text-textMuted flex items-center gap-2"><i class="fa-solid fa-engine w-3"></i> Engine</span>
+                                <span class="text-secondary font-mono font-bold">94%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] bg-white/5 px-2 py-1.5 rounded border border-white/5">
+                                <span class="text-textMuted flex items-center gap-2"><i class="fa-solid fa-car-battery w-3"></i> Battery</span>
+                                <span class="text-secondary font-mono font-bold">91%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] bg-white/5 px-2 py-1.5 rounded border border-white/5">
+                                <span class="text-textMuted flex items-center gap-2"><i class="fa-solid fa-compact-disc w-3"></i> Tyres</span>
+                                <span class="text-secondary font-mono font-bold">93%</span>
+                            </div>
+                            <div class="flex justify-between items-center text-[10px] bg-white/5 px-2 py-1.5 rounded border border-white/5">
+                                <span class="text-textMuted flex items-center gap-2"><i class="fa-solid fa-stop text-red-500 w-3"></i> Brakes</span>
+                                <span class="text-secondary font-mono font-bold">87%</span>
+                            </div>
+                        </div>
+                    </div>
+                    <button class="w-full py-2 mt-3 text-[10px] text-textMuted hover:text-white bg-white/5 hover:bg-white/10 rounded border border-white/5 transition-colors flex items-center justify-center gap-2 relative z-10">
+                        Open Diagnostics <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+
+                <!-- Maintenance Predictions -->
+                <div class="glass-panel flex flex-col p-4 border-borderSubtle">
+                    <span class="header-xs text-white mb-3">MAINTENANCE PREDICTIONS</span>
+                    <div class="flex-1 flex flex-col gap-1.5 justify-center">
+                        <div class="flex justify-between items-center text-xs py-2 border-b border-borderSubtle">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-triangle-exclamation text-warning text-[10px]"></i>
+                                <span class="text-gray-300 text-[11px]">Oil Change</span>
+                            </div>
+                            <span class="text-warning text-[10px] font-mono">in 1,250 km</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs py-2 border-b border-borderSubtle">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-circle-exclamation text-danger text-[10px]"></i>
+                                <span class="text-gray-300 text-[11px]">Brake Pads</span>
+                            </div>
+                            <span class="text-danger text-[10px] font-mono">in 2,100 km</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs py-2 border-b border-borderSubtle">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-circle-info text-primary text-[10px]"></i>
+                                <span class="text-gray-300 text-[11px]">Tyre Rotation</span>
+                            </div>
+                            <span class="text-primary text-[10px] font-mono">in 3,450 km</span>
+                        </div>
+                        <div class="flex justify-between items-center text-xs py-2">
+                            <div class="flex items-center gap-3">
+                                <i class="fa-solid fa-circle-exclamation text-danger text-[10px]"></i>
+                                <span class="text-gray-300 text-[11px]">Battery Health</span>
+                            </div>
+                            <span class="text-danger text-[10px] font-mono">in 650 km</span>
+                        </div>
+                    </div>
+                    <button class="w-full py-2 mt-3 text-[10px] text-textMuted hover:text-white bg-white/5 hover:bg-white/10 rounded border border-white/5 transition-colors flex items-center justify-center gap-2">
+                        Open Maintenance <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+
+            <!-- QUICK ACTIONS ROW -->
+            <div class="mb-4">
+                <span class="header-xs text-white mb-3 block">QUICK ACTIONS</span>
+                <div class="flex gap-3 h-[50px]">
+                    <button class="flex-1 glass-panel bg-panel border-borderSubtle hover:border-primary/50 flex items-center justify-center gap-3 group transition-colors px-4">
+                        <div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center"><i class="fa-solid fa-car-side text-[10px]"></i></div>
+                        <div class="text-left w-full"><div class="text-[11px] font-bold text-white leading-tight">Add Vehicle</div><div class="text-[9px] text-textMuted leading-tight">Register new vehicle</div></div>
+                    </button>
+                    <button class="flex-1 glass-panel bg-panel border-borderSubtle hover:border-primary/50 flex items-center justify-center gap-3 group transition-colors px-4">
+                        <div class="w-7 h-7 rounded-full bg-primary/10 text-primary flex items-center justify-center"><i class="fa-solid fa-draw-polygon text-[10px]"></i></div>
+                        <div class="text-left w-full"><div class="text-[11px] font-bold text-white leading-tight">Create Geofence</div><div class="text-[9px] text-textMuted leading-tight">Set up safe zones</div></div>
+                    </button>
+                    <button class="flex-1 glass-panel bg-panel border-borderSubtle hover:border-warning/50 flex items-center justify-center gap-3 group transition-colors px-4">
+                        <div class="w-7 h-7 rounded-full bg-warning/10 text-warning flex items-center justify-center"><i class="fa-solid fa-triangle-exclamation text-[10px]"></i></div>
+                        <div class="text-left w-full"><div class="text-[11px] font-bold text-white leading-tight">Send Alert</div><div class="text-[9px] text-textMuted leading-tight">Broadcast to driver</div></div>
+                    </button>
+                    <button class="flex-1 glass-panel bg-panel border-borderSubtle hover:border-secondary/50 flex items-center justify-center gap-3 group transition-colors px-4">
+                        <div class="w-7 h-7 rounded-full bg-secondary/10 text-secondary border border-secondary flex items-center justify-center shadow-neon-green"><i class="fa-solid fa-satellite-dish text-[10px] pulse"></i></div>
+                        <div class="text-left w-full"><div class="text-[11px] font-bold text-white leading-tight">Start Tracking</div><div class="text-[9px] text-textMuted leading-tight">Track any vehicle</div></div>
+                    </button>
+                    <button class="flex-1 glass-panel bg-panel border-borderSubtle hover:border-purple/50 flex items-center justify-center gap-3 group transition-colors px-4">
+                        <div class="w-7 h-7 rounded-full bg-purple/10 text-purple flex items-center justify-center"><i class="fa-solid fa-file-invoice text-[10px]"></i></div>
+                        <div class="text-left w-full"><div class="text-[11px] font-bold text-white leading-tight">Generate Report</div><div class="text-[9px] text-textMuted leading-tight">Download analytics</div></div>
+                    </button>
+                    <button class="flex-1 glass-panel bg-panel border-borderSubtle hover:border-purple/50 flex items-center justify-center gap-3 group transition-colors px-4">
+                        <div class="w-7 h-7 rounded-full bg-purple/10 text-purple flex items-center justify-center"><i class="fa-solid fa-sparkles text-[10px]"></i></div>
+                        <div class="text-left w-full"><div class="text-[11px] font-bold text-white leading-tight flex items-center gap-2">AI Assistant <i class="fa-solid fa-star text-[8px] text-purple"></i></div><div class="text-[9px] text-textMuted leading-tight">Ask anything...</div></div>
+                    </button>
+                </div>
+            </div>
+
+        </main>
+        
+        <!-- BOTTOM IN-CAR UI -->
+         <div class="absolute bottom-0 left-0 right-0 h-[80px] bg-[#070b16] border-t border-borderSubtle flex z-30 font-sans shadow-[0_-10px_30px_rgba(0,0,0,0.5)] z-50 overflow-visible">
+            
+            <!-- Speedometer Curve Section (Extends upward visually) -->
+            <div class="w-[180px] h-full flex items-center justify-center border-r border-borderSubtle relative px-4">
+                 <!-- Arc decorative SVG -->
+                 <div class="absolute top-[-10px] w-[140px] h-[70px] pointer-events-none">
+                     <svg viewBox="0 0 100 50" class="w-full h-full">
+                         <path d="M 10 50 A 40 40 0 0 1 90 50" fill="none" stroke="#1a2333" stroke-width="4" stroke-linecap="round"/>
+                         <path d="M 10 50 A 40 40 0 0 1 70 15" fill="none" stroke="#FF3B30" stroke-width="4" stroke-linecap="round" style="filter: drop-shadow(0 0 3px #FF3B30); opacity: 0.8"/>
+                         <path d="M 40 20 A 40 40 0 0 1 90 50" fill="none" stroke="#1463FF" stroke-width="4" stroke-linecap="round" style="filter: drop-shadow(0 0 3px #1463FF); opacity: 0.8"/>
+                     </svg>
+                 </div>
+                 <div class="flex items-end gap-1 relative z-10 pt-2">
+                     <span class="text-3xl font-bold tracking-tight">72</span>
+                     <span class="text-[10px] text-textMuted pb-1">km/h</span>
+                 </div>
+                 <div class="absolute bottom-2 left-1/2 -translate-x-1/2 text-secondary text-[10px] font-bold">D</div>
+                 <!-- Speed limit badge -->
+                 <div class="absolute right-4 top-4 w-5 h-5 rounded-full border border-danger flex items-center justify-center text-[8px] font-bold text-white bg-[#070b16]">80</div>
+            </div>
+
+            <!-- AI ALert strip -->
+            <div class="flex-1 flex items-center px-4 border-r border-borderSubtle gap-4">
+                <span class="text-[9px] text-danger font-bold uppercase tracking-wider">AI ALERT</span>
+                <div class="bg-danger/10 border border-danger/30 rounded p-2 flex items-center gap-3 w-full">
+                     <i class="fa-solid fa-triangle-exclamation text-danger text-sm"></i>
+                     <div>
+                         <div class="text-[11px] font-bold text-white leading-tight">Drowsiness Detected</div>
+                         <div class="text-[9px] text-textMuted leading-tight">Take a break for your safety</div>
+                     </div>
+                </div>
+            </div>
+
+            <!-- DRIVER SCORE strip -->
+            <div class="w-[180px] flex flex-col justify-center px-6 border-r border-borderSubtle">
+                <div class="text-[9px] text-textMuted uppercase font-bold tracking-wider mb-1">DRIVER SCORE</div>
+                <div class="flex items-end gap-1">
+                    <span class="text-xl font-bold">86</span>
+                    <span class="text-[11px] text-textMuted pb-1">/100</span>
+                </div>
+                <div class="text-[10px] text-secondary mt-0.5">Good</div>
+                <div class="w-full h-[3px] bg-surface rounded-full overflow-hidden mt-1"><div class="h-full w-[86%] bg-secondary"></div></div>
+            </div>
+
+            <!-- Trip Info strip -->
+            <div class="w-[180px] flex flex-col justify-center px-6 border-r border-borderSubtle">
+                <div class="text-[9px] text-textMuted uppercase font-bold tracking-wider mb-2">TRIP INFO</div>
+                <div class="flex justify-between items-end">
+                    <div>
+                        <div class="text-[13px] font-bold text-white">23 km</div>
+                        <div class="text-[9px] text-textMuted mt-0.5">Distance</div>
+                    </div>
+                    <div>
+                        <div class="text-[13px] font-bold text-white">00:32</div>
+                        <div class="text-[9px] text-textMuted mt-0.5">Duration</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Next Stop strip -->
+            <div class="flex-1 flex items-center px-6 border-r border-borderSubtle gap-4">
+                <div class="text-[9px] text-textMuted uppercase font-bold tracking-wider absolute top-3">NEXT STOP</div>
+                <div class="flex items-center gap-4 w-full mt-3">
+                    <div class="w-8 h-8 rounded-full bg-secondary/10 flex items-center justify-center text-secondary font-bold text-lg"><i class="fa-solid fa-arrow-up"></i></div>
+                    <div>
+                        <div class="text-[11px] font-bold text-white">2.4 km</div>
+                        <div class="text-[12px] text-white my-0.5">Powai Lake</div>
+                        <div class="text-[9px] text-textMuted">Stay on Eastern Express Hwy</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Media Player Strip -->
+             <div class="w-[240px] flex items-center px-6 relative">
+                 <div class="flex gap-4 items-center opacity-50 w-full hover:opacity-100 transition-opacity cursor-pointer">
+                    <div class="w-10 h-10 rounded border border-borderSubtle flex items-center justify-center text-textMuted text-lg bg-surface">
+                        <i class="fa-solid fa-music"></i>
+                    </div>
+                    <div>
+                        <div class="text-[11px] font-bold text-white">Not Playing</div>
+                        <div class="text-[9px] text-textMuted">Tap to play</div>
+                    </div>
+                 </div>
+                 
+                 <!-- Embedded Nav Icons Underneath / Overlaid -->
+                 <div class="absolute bottom-2 right-4 flex gap-4 text-textMuted text-[11px]">
+                     <div class="text-xs font-mono mr-2 pt-0.5">10:24 AM</div>
+                     <i class="fa-solid fa-signal hover:text-white cursor-pointer mt-1"></i>
+                     <i class="fa-solid fa-wifi hover:text-white cursor-pointer mt-1"></i>
+                     <i class="fa-solid fa-battery-three-quarters hover:text-white cursor-pointer mt-1 text-white"></i>
+                 </div>
+             </div>
+             
+             <!-- Absolute centered floating icon dock standard in cars -->
+             <div class="absolute bottom-2 left-1/2 -translate-x-1/2 flex gap-8 items-center text-textMuted text-sm">
+                 <i class="fa-solid fa-house hover:text-white cursor-pointer transition-colors"></i>
+                 <i class="fa-solid fa-grip hover:text-white cursor-pointer transition-colors"></i>
+                 <i class="fa-solid fa-phone hover:text-white cursor-pointer transition-colors"></i>
+                 <i class="fa-solid fa-music hover:text-white cursor-pointer transition-colors"></i>
+                 <i class="fa-solid fa-gear hover:text-white cursor-pointer transition-colors"></i>
+             </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+         RIGHT SIDEBAR (Mobile App Preview)
+         ========================================== -->
+    <aside class="w-[300px] flex-shrink-0 bg-[#070a14] border-l border-borderSubtle p-5 flex flex-col z-20 pb-[90px] overflow-hidden">
+        
+        <div class="flex justify-between items-center mb-6">
+            <h3 class="text-xs tracking-wider text-textMuted uppercase font-semibold">MOBILE APP</h3>
+            <span class="text-[9px] text-gray-500">Companion</span>
+        </div>
+
+        <!-- Phone Shell -->
+        <div class="flex-1 border border-borderSubtle rounded-3xl bg-[#04060d] p-1 flex flex-col shadow-[0_0_20px_rgba(0,0,0,0.5)] relative overflow-hidden">
+            <!-- Simulated screen content -->
+            <div class="flex-1 bg-[#070b15] rounded-[22px] overflow-y-auto flex flex-col relative">
+                
+                <!-- Status bar -->
+                <div class="h-6 flex justify-between items-center px-4 pt-1 text-[8px] font-bold mb-2">
+                    <span>9:41</span>
+                    <div class="flex gap-1 items-center">
+                        <i class="fa-solid fa-signal"></i>
+                        <i class="fa-solid fa-wifi"></i>
+                        <i class="fa-solid fa-battery-full"></i>
+                    </div>
+                </div>
+
+                <!-- Header -->
+                <div class="px-4 flex justify-between items-center mb-4">
+                    <div class="flex items-center gap-2">
+                        <img src="https://randomuser.me/api/portraits/men/32.jpg" class="w-6 h-6 rounded-full border border-borderSubtle">
+                        <div>
+                            <div class="text-[10px] font-bold text-white leading-tight">Hi, Rohit</div>
+                            <div class="text-[8px] text-textMuted leading-tight">Fleet Manager</div>
+                        </div>
+                    </div>
+                    <div class="w-6 h-6 rounded-full bg-surface border border-borderSubtle flex items-center justify-center text-[10px] relative">
+                        <i class="fa-regular fa-bell"></i>
+                        <div class="absolute -top-1 -right-1 w-2.5 h-2.5 bg-danger text-[6px] font-bold border border-[#070b15] rounded-full flex items-center justify-center">12</div>
+                    </div>
+                </div>
+
+                <!-- Live Overview -->
+                <div class="px-4 mb-4">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] text-white font-semibold">Live Overview</span>
+                        <span class="text-[8px] text-primary">View All</span>
+                    </div>
+                    <div class="grid grid-cols-3 gap-2">
+                        <div class="bg-primary/10 border border-primary/20 rounded p-2 text-center">
+                            <i class="fa-solid fa-car text-primary text-[10px] bg-primary/20 p-1.5 rounded-sm mb-1"></i>
+                            <div class="text-[11px] font-bold text-white leading-tight">128</div>
+                            <div class="text-[7px] text-textMuted">Vehicles</div>
+                        </div>
+                        <div class="bg-secondary/10 border border-secondary/20 rounded p-2 text-center">
+                            <i class="fa-solid fa-route text-secondary text-[10px] bg-secondary/20 p-1.5 rounded-sm mb-1"></i>
+                            <div class="text-[11px] font-bold text-white leading-tight">24</div>
+                            <div class="text-[7px] text-textMuted">Live Trips</div>
+                        </div>
+                        <div class="bg-danger/10 border border-danger/20 rounded p-2 text-center">
+                            <i class="fa-solid fa-triangle-exclamation text-danger text-[10px] bg-danger/20 p-1.5 rounded-sm mb-1"></i>
+                            <div class="text-[11px] font-bold text-white leading-tight">12</div>
+                            <div class="text-[7px] text-textMuted">Alerts</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Small Map -->
+                <div class="px-4 mb-4">
+                    <div class="w-full h-24 rounded-lg bg-borderSubtle relative overflow-hidden border border-white/5">
+                        <div class="absolute inset-0 map-bg opacity-50"></div>
+                        <svg class="absolute inset-0 w-full h-full" viewBox="0 0 200 100">
+                             <path d="M 20 80 Q 50 20 100 50 T 180 30" fill="none" stroke="rgba(20,99,255,0.7)" stroke-width="1.5"/>
+                             <!-- Marker -->
+                             <circle cx="100" cy="50" r="3" fill="#1463FF" stroke="white" stroke-width="1"></circle>
+                        </svg>
+                        <div class="absolute top-1/2 left-[50%] -translate-x-[20%] -translate-y-[120%] bg-panel/90 backdrop-blur border border-white/10 px-1.5 py-1 rounded shadow-lg text-center pointer-events-none">
+                            <div class="text-[7px] font-bold text-white">MH01 AB 1234</div>
+                            <div class="text-[6px] text-textMuted">72 km/h</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Alerts -->
+                <div class="px-4 mb-4 flex-1">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-[10px] text-white font-semibold flex items-center gap-1">Recent Alerts <div class="w-1 h-1 rounded-full bg-danger"></div></span>
+                        <span class="text-[8px] text-primary">View All</span>
+                    </div>
+                    <div class="space-y-1.5">
+                        <div class="bg-danger/5 border border-danger/30 rounded p-2 flex gap-2 items-start relative">
+                            <i class="fa-solid fa-eye-low-vision text-danger text-[8px] mt-0.5"></i>
+                            <div>
+                                <div class="text-[9px] font-bold text-white leading-tight">Drowsiness Detected</div>
+                                <div class="text-[7px] text-textMuted leading-tight mt-0.5">MH01 AB 1234 • 10:24 AM</div>
+                            </div>
+                            <span class="absolute right-2 top-2 text-[6px] text-danger font-bold uppercase">Critical</span>
+                        </div>
+                        <div class="bg-warning/5 border border-warning/20 rounded p-2 flex gap-2 items-start relative">
+                            <i class="fa-solid fa-route text-warning text-[8px] mt-0.5"></i>
+                            <div>
+                                <div class="text-[9px] font-bold text-white leading-tight">Route Deviation</div>
+                                <div class="text-[7px] text-textMuted leading-tight mt-0.5">MH02 CD 5678 • 10:21 AM</div>
+                            </div>
+                            <span class="absolute right-2 top-2 text-[6px] text-warning font-bold uppercase">Warning</span>
+                        </div>
+                        <div class="bg-danger/5 border border-danger/30 rounded p-2 flex gap-2 items-start relative">
+                            <i class="fa-solid fa-map-pin text-danger text-[8px] mt-0.5"></i>
+                            <div>
+                                <div class="text-[9px] font-bold text-white leading-tight">Geofence Breach</div>
+                                <div class="text-[7px] text-textMuted leading-tight mt-0.5">MH03 EF 9012 • 10:18 AM</div>
+                            </div>
+                            <span class="absolute right-2 top-2 text-[6px] text-danger font-bold uppercase">Critical</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Driver Score Mini -->
+                <div class="px-4 mb-4">
+                    <div class="bg-panel border border-borderSubtle rounded p-3 flex justify-between items-center">
+                        <div>
+                            <div class="text-[9px] text-white font-semibold">Driver Score (Avg.)</div>
+                            <div class="text-[12px] font-bold text-white mt-0.5">86 <span class="text-[8px] text-textMuted">/100</span></div>
+                            <div class="text-[7px] text-secondary mt-0.5"><i class="fa-solid fa-arrow-trend-up"></i> 8.2 pts vs last month</div>
+                        </div>
+                         <!-- Purple Ring mini SVG -->
+                        <div class="w-6 h-6">
+                            <svg viewBox="0 0 36 36" class="w-full h-full transform -rotate-90">
+                                <circle cx="18" cy="18" r="16" fill="none" stroke="#1a2333" stroke-width="4"></circle>
+                                <circle cx="18" cy="18" r="16" fill="none" stroke="#A855F7" stroke-width="4" stroke-dasharray="86 100"></circle>
+                            </svg>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions Grid Mini -->
+                <div class="px-4 mb-16">
+                    <div class="text-[10px] text-white font-semibold mb-2">Quick Actions</div>
+                    <div class="flex justify-between px-1">
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="w-7 h-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-[10px]"><i class="fa-solid fa-location-dot"></i></div>
+                            <span class="text-[7px] text-textMuted">Track</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="w-7 h-7 rounded-full bg-danger/10 border border-danger/20 flex items-center justify-center text-danger text-[10px] relative"><i class="fa-regular fa-bell"></i><div class="absolute top-0 right-0 w-2 h-2 bg-danger rounded-full border border-[#070b15]"></div></div>
+                            <span class="text-[7px] text-textMuted">Alert</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="w-7 h-7 rounded-full bg-purple/10 border border-purple/20 flex items-center justify-center text-purple text-[10px]"><i class="fa-solid fa-draw-polygon"></i></div>
+                            <span class="text-[7px] text-textMuted">Geofence</span>
+                        </div>
+                         <div class="flex flex-col items-center gap-1.5">
+                            <div class="w-7 h-7 rounded-full bg-primary/10 border border-primary/20 flex items-center justify-center text-primary text-[10px]"><i class="fa-solid fa-file-invoice"></i></div>
+                            <span class="text-[7px] text-textMuted">Report</span>
+                        </div>
+                        <div class="flex flex-col items-center gap-1.5">
+                            <div class="w-7 h-7 rounded-full bg-surface border border-borderSubtle flex items-center justify-center text-textMuted text-[10px]"><i class="fa-solid fa-ellipsis"></i></div>
+                            <span class="text-[7px] text-textMuted">More</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bottom Tab Nav -->
+                <div class="absolute bottom-0 left-0 right-0 h-12 bg-panel border-t border-borderSubtle flex justify-around items-center px-4 rounded-b-[22px] backdrop-blur text-[9px] text-textMuted">
+                    <div class="flex flex-col items-center text-primary gap-0.5"><i class="fa-solid fa-house"></i> Home</div>
+                    <div class="flex flex-col items-center hover:text-white gap-0.5"><i class="fa-solid fa-satellite-dish"></i> Tracking</div>
+                    <div class="flex flex-col items-center hover:text-white gap-0.5 relative"><i class="fa-regular fa-bell"></i> Alerts <div class="absolute top-0 right-0 w-1.5 h-1.5 bg-danger rounded-full"></div></div>
+                    <div class="flex flex-col items-center hover:text-white gap-0.5"><i class="fa-solid fa-file-lines"></i> Reports</div>
+                    <div class="flex flex-col items-center hover:text-white gap-0.5"><i class="fa-solid fa-bars"></i> More</div>
+                </div>
+
+            </div>
+        </div>
+    </aside>
+
+</body>
+</html>
