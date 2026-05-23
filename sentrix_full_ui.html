@@ -78,67 +78,132 @@
             background-position: center;
             filter: grayscale(1) invert(1) brightness(0.15) contrast(1.5) sepia(0.2) hue-rotate(180deg);
         }
+
+        /* Advanced UX Transitions */
+        .module-card {
+            transition: all 0.4s cubic-bezier(0.2, 0.8, 0.2, 1);
+            cursor: pointer;
+        }
+        .module-card:hover {
+            transform: translateY(-2px);
+            border-color: rgba(20, 99, 255, 0.5);
+            box-shadow: 0 10px 30px rgba(20, 99, 255, 0.15);
+        }
+        
+        .nav-pill {
+            transition: all 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+        }
+        
+        .sidebar-expanded .sidebar-text {
+            opacity: 1;
+            transform: translateX(0);
+        }
+        
+        /* Command Palette Blur */
+        .cmd-palette-bg {
+            backdrop-filter: blur(20px);
+        }
+
+        /* Fullscreen expansion animation */
+        .module-expanded {
+            position: fixed !important;
+            top: 20px !important;
+            left: 88px !important; /* 68px sidebar + 20px spacing */
+            right: 320px !important; /* 300px mobile app + 20px spacing */
+            bottom: 100px !important; /* 80px bottom bar + 20px spacing */
+            width: auto !important;
+            height: auto !important;
+            z-index: 40;
+            background-color: #04070e !important;
+            border-color: rgba(20, 99, 255, 0.5) !important;
+            box-shadow: 0 0 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(20, 99, 255, 0.2) !important;
+        }
+
+        body.module-foused .module-card:not(.module-expanded) {
+            opacity: 0.1;
+            pointer-events: none;
+            filter: blur(4px);
+        }
     </style>
 </head>
 <body class="flex h-screen w-screen text-sm antialiased selection:bg-primary selection:text-white">
 
+    <!-- Sidebar Spacer for fixed positioning -->
+    <div class="w-[68px] flex-shrink-0 z-0"></div>
+
     <!-- ==========================================
-         LEFT SIDEBAR
+         LEFT SIDEBAR (Adaptive)
          ========================================== -->
-    <aside class="w-[220px] flex-shrink-0 flex flex-col bg-panel border-r border-borderSubtle z-20">
+    <aside class="fixed left-0 top-0 bottom-0 w-[68px] hover:w-[240px] group flex flex-col bg-panel/95 backdrop-blur-2xl border-r border-borderSubtle z-50 transition-[width] duration-400 ease-[cubic-bezier(0.2,0.8,0.2,1)] overflow-hidden shadow-[5px_0_30px_rgba(0,0,0,0)] hover:shadow-[10px_0_40px_rgba(0,0,0,0.6)]">
         
         <!-- Logo -->
-        <div class="h-[68px] flex items-center px-5 border-b border-borderSubtle shrink-0">
-            <div class="h-8 w-8 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-neon-blue font-serif relative overflow-hidden">
+        <div class="h-[68px] w-[240px] flex items-center px-[18px] border-b border-borderSubtle shrink-0">
+            <div class="h-8 w-8 shrink-0 bg-blue-600 rounded-lg flex items-center justify-center text-white font-bold text-lg shadow-neon-blue font-serif relative overflow-hidden">
                 S<div class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent"></div>
             </div>
-            <div class="ml-3">
+            <div class="ml-4 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300 translate-x-4 group-hover:translate-x-0 transition-transform">
                 <div class="font-bold text-sm tracking-wide">SENTRIX DRIVE</div>
                 <div class="text-[9px] text-textMuted uppercase tracking-wider">AI Fleet Intelligence</div>
             </div>
         </div>
 
         <!-- Navigation Menu -->
-        <div class="flex-1 overflow-y-auto py-5 flex flex-col gap-1 px-3">
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20 transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-house w-4 text-center"></i> Overview
+        <div class="flex-1 w-[240px] overflow-y-auto py-5 flex flex-col gap-1 px-3">
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg bg-primary/10 text-primary border border-primary/20 transition-all font-medium text-[13px] relative">
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 h-5 w-1 bg-primary rounded-r"></div>
+                <i class="fa-solid fa-house w-6 text-center shrink-0"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Overview</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-satellite-dish w-4 text-center"></i> Live Tracking
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-satellite-dish w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Live Tracking</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-microchip w-4 text-center"></i> Driver Intelligence
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-microchip w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Driver Intelligence</span>
             </a>
-             <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-shield-halved w-4 text-center"></i> Alerts & Incidents
-                <span class="ml-auto bg-danger/20 text-danger text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold">12</span>
+             <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-shield-halved w-6 text-center shrink-0 group-hover/item:text-danger transition-colors relative">
+                    <div class="absolute -top-1 -right-1 w-2 h-2 bg-danger rounded-full border border-panel group-hover:opacity-0 transition-opacity"></div>
+                </i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300 flex-1 flex items-center justify-between">
+                    Alerts & Incidents
+                    <span class="bg-danger/20 text-danger text-[10px] w-5 h-5 flex items-center justify-center rounded-full font-bold ml-2">12</span>
+                </span>
             </a>
-             <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-draw-polygon w-4 text-center"></i> Geofencing
+             <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-draw-polygon w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Geofencing</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-car-battery w-4 text-center"></i> Vehicle Health
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-car-battery w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Vehicle Health</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-wrench w-4 text-center"></i> Maintenance
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-wrench w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Maintenance</span>
             </a>
             <div class="h-4"></div>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-chart-line w-4 text-center"></i> Analytics & Reports
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-chart-line w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Analytics & Reports</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-id-card w-4 text-center"></i> Drivers
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-id-card w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Drivers</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-route w-4 text-center"></i> Trips
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-route w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Trips</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px]">
-                <i class="fa-solid fa-gear w-4 text-center"></i> Settings
+            <a href="#" class="flex items-center gap-4 px-2 py-2.5 rounded-lg text-textMuted hover:bg-white/5 hover:text-white transition-all font-medium text-[13px] group/item">
+                <i class="fa-solid fa-gear w-6 text-center shrink-0 group-hover/item:text-primary transition-colors"></i> 
+                <span class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-all duration-300">Settings</span>
             </a>
         </div>
 
         <!-- Fleet Status Bottom Widget -->
-        <div class="mt-auto px-5 py-4 border-t border-borderSubtle">
+        <div class="mt-auto px-5 py-4 border-t border-borderSubtle w-[240px] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             <h3 class="header-xs mb-3">FLEET STATUS</h3>
             <div class="flex items-center justify-between mb-4">
                 <div>
@@ -176,18 +241,18 @@
             </div>
         </div>
         
-        <div class="px-5 py-4 border-t border-borderSubtle flex items-center justify-between">
-            <div class="flex items-center gap-2">
-                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rohit" class="w-7 h-7 rounded-sm">
-                <div>
+        <div class="px-[18px] py-4 border-t border-borderSubtle flex items-center justify-between w-[240px]">
+            <div class="flex items-center gap-4">
+                <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Rohit" class="w-8 h-8 rounded-sm shrink-0">
+                <div class="whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                     <div class="text-[11px] font-semibold text-white">Rohit Mehta</div>
                     <div class="text-[9px] text-textMuted">Fleet Admin</div>
                 </div>
             </div>
-            <i class="fa-solid fa-chevron-right text-[10px] text-textMuted"></i>
+            <i class="fa-solid fa-chevron-right text-[10px] text-textMuted opacity-0 group-hover:opacity-100 transition-opacity duration-300"></i>
         </div>
 
-        <div class="px-5 pb-4 text-textxxs text-textMuted">
+        <div class="px-5 pb-4 text-textxxs text-textMuted w-[240px] opacity-0 group-hover:opacity-100 transition-opacity duration-300">
             Sentrix Drive v2.4.1<br>© 2026 Sentrix AI
         </div>
     </aside>
@@ -198,16 +263,25 @@
     <div class="flex-1 flex flex-col min-w-0 bg-base relative z-10">
         
         <!-- TOP NAVBAR -->
-        <header class="h-[68px] border-b border-borderSubtle flex items-center justify-between px-6 shrink-0 bg-base w-full">
-            <div class="flex items-center gap-4">
-                <div class="bg-panel border border-borderSubtle px-3 py-1.5 rounded flex items-center gap-2 w-64 focus-within:border-primary/50 transition-colors">
+        <header class="h-[68px] border-b border-borderSubtle flex items-center justify-between px-6 shrink-0 bg-base w-full relative z-20">
+            <div class="flex items-center gap-4 flex-1">
+                <div class="bg-panel border border-borderSubtle px-3 py-1.5 rounded flex items-center gap-2 w-64 focus-within:border-primary/50 transition-colors cursor-text" onclick="toggleCommandPalette()">
                     <i class="fa-solid fa-magnifying-glass text-textMuted text-xs"></i>
-                    <input type="text" placeholder="Search vehicles, drivers, zones, alerts..." class="bg-transparent border-none outline-none text-xs text-textMain w-full placeholder-textMuted">
-                    <span class="text-textxxs text-textMuted font-mono">⌘ K</span>
+                    <input type="text" placeholder="Search vehicles, drivers..." class="bg-transparent border-none outline-none text-xs text-textMain w-full placeholder-textMuted pointer-events-none" readonly>
+                    <span class="text-textxxs text-textMuted font-mono bg-white/5 px-1.5 py-0.5 rounded border border-white/10">⌘K</span>
                 </div>
             </div>
 
-            <div class="flex items-center gap-6">
+            <!-- Contextual Navigation Pills -->
+            <div class="absolute left-1/2 -translate-x-1/2 flex items-center bg-[#070b14]/80 backdrop-blur-xl border border-white/5 rounded-full p-1 shadow-[0_0_20px_rgba(0,0,0,0.5)] z-30">
+                <button class="nav-pill px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] uppercase tracking-wide font-bold shadow-neon-blue">Overview</button>
+                <button class="nav-pill px-4 py-1.5 rounded-full text-textMuted hover:text-white hover:bg-white/5 text-[11px] uppercase tracking-wide font-medium cursor-pointer">Live Tracking</button>
+                <button class="nav-pill px-4 py-1.5 rounded-full text-textMuted hover:text-white hover:bg-white/5 text-[11px] uppercase tracking-wide font-medium cursor-pointer">Driver Intel</button>
+                <button class="nav-pill px-4 py-1.5 rounded-full text-textMuted hover:text-white hover:bg-white/5 text-[11px] uppercase tracking-wide font-medium cursor-pointer">Alerts</button>
+                <button class="nav-pill px-4 py-1.5 rounded-full text-textMuted hover:text-white hover:bg-white/5 text-[11px] uppercase tracking-wide font-medium cursor-pointer">Diagnostics</button>
+            </div>
+
+            <div class="flex items-center gap-6 flex-1 justify-end">
                 <!-- System Status Wave (Simulated) -->
                 <div class="flex items-center gap-2">
                     <div class="flex flex-col items-end">
@@ -330,7 +404,7 @@
             <div class="grid grid-cols-3 gap-4 h-[440px]">
                 
                 <!-- MAP SECTION -->
-                <div class="col-span-2 glass-panel flex flex-col overflow-hidden relative border-borderSubtle">
+                <div class="col-span-2 glass-panel flex flex-col overflow-hidden relative border-borderSubtle module-card" onclick="toggleModule(this, 'Live Tracking')">
                     <!-- Header inside map absolute -->
                     <div class="absolute top-4 left-4 right-4 z-10 flex justify-between items-center pointer-events-none">
                         <div class="flex items-center gap-3">
@@ -448,7 +522,7 @@
                 </div>
 
                 <!-- ALERTS SECTION -->
-                <div class="col-span-1 glass-panel flex flex-col p-4 border-borderSubtle">
+                <div class="col-span-1 glass-panel flex flex-col p-4 border-borderSubtle module-card" onclick="toggleModule(this, 'Alerts & Incidents')">
                     <div class="flex justify-between items-center mb-4">
                         <span class="header-xs text-white">AI ALERTS</span>
                         <a href="#" class="text-[10px] text-primary hover:text-white transition-colors">View All</a>
@@ -538,7 +612,7 @@
             <div class="grid grid-cols-3 gap-4 h-[220px]">
                 
                 <!-- Driver Monitoring -->
-                <div class="glass-panel flex flex-col p-4 border-borderSubtle">
+                <div class="glass-panel flex flex-col p-4 border-borderSubtle module-card" onclick="toggleModule(this, 'Driver Intelligence')">
                     <span class="header-xs text-white mb-3 flex items-center gap-2">DRIVER MONITORING <span class="lowercase text-secondary bg-secondary/10 px-1 py-0.5 rounded text-[8px] border border-secondary/20">(live)</span></span>
                     
                     <div class="flex gap-4 flex-1">
@@ -583,7 +657,7 @@
                 </div>
 
                 <!-- Vehicle Health -->
-                <div class="glass-panel flex flex-col p-4 border-borderSubtle relative">
+                <div class="glass-panel flex flex-col p-4 border-borderSubtle relative module-card" onclick="toggleModule(this, 'Diagnostics')">
                     <span class="header-xs text-white mb-3">VEHICLE HEALTH OVERVIEW</span>
                     <div class="flex-1 flex items-center relative gap-2">
                         <div class="w-[140px] shrink-0 h-full relative flex items-center">
@@ -616,7 +690,7 @@
                 </div>
 
                 <!-- Maintenance Predictions -->
-                <div class="glass-panel flex flex-col p-4 border-borderSubtle">
+                <div class="glass-panel flex flex-col p-4 border-borderSubtle module-card" onclick="toggleModule(this, 'Maintenance Management')">
                     <span class="header-xs text-white mb-3">MAINTENANCE PREDICTIONS</span>
                     <div class="flex-1 flex flex-col gap-1.5 justify-center">
                         <div class="flex justify-between items-center text-xs py-2 border-b border-borderSubtle">
@@ -965,5 +1039,220 @@
         </div>
     </aside>
 
+    <!-- Edge Navigation Hotspots -->
+    <div id="hotspot-left" class="fixed left-[68px] top-1/2 -translate-y-1/2 w-8 h-64 z-30 group cursor-pointer flex items-center justify-start" onclick="navigateEdge('left')">
+        <div class="absolute inset-y-0 left-0 w-24 bg-gradient-to-r from-danger/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <div id="hotspot-left-label" class="bg-panel/95 backdrop-blur-xl border border-white/10 text-white rounded-r-xl py-3 px-5 shadow-[0_0_30px_rgba(255,59,48,0.4)] opacity-0 group-hover:opacity-100 transition-all duration-500 -translate-x-full group-hover:translate-x-0 whitespace-nowrap font-semibold text-[11px] flex items-center gap-3">
+            <i class="fa-solid fa-arrow-left text-danger"></i> <span id="hotspot-left-text">Overview</span>
+        </div>
+    </div>
+
+    <div id="hotspot-right" class="fixed right-[300px] top-1/2 -translate-y-1/2 w-8 h-64 z-30 group cursor-pointer flex items-center justify-end" onclick="navigateEdge('right')">
+        <div class="absolute inset-y-0 right-0 w-24 bg-gradient-to-l from-primary/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"></div>
+        <div id="hotspot-right-label" class="bg-panel/95 backdrop-blur-xl border border-white/10 text-white rounded-l-xl py-3 px-5 shadow-[0_0_30px_rgba(20,99,255,0.4)] opacity-0 group-hover:opacity-100 transition-all duration-500 translate-x-full group-hover:translate-x-0 whitespace-nowrap font-semibold text-[11px] flex items-center gap-3">
+            <span id="hotspot-right-text">Live Tracking</span> <i class="fa-solid fa-arrow-right text-primary"></i>
+        </div>
+    </div>
+
+    <!-- Command Palette Modal -->
+    <div id="command-palette" class="fixed inset-0 z-[100] bg-black/60 opacity-0 pointer-events-none transition-opacity duration-300 cmd-palette-bg flex items-start justify-center pt-[15vh]">
+        <div class="w-full max-w-2xl bg-panel/95 backdrop-blur-3xl border border-white/10 rounded-2xl shadow-[0_30px_100px_rgba(0,0,0,0.8),0_0_40px_rgba(20,99,255,0.15)] overflow-hidden transform scale-95 transition-transform duration-300" id="cmd-palette-box">
+            <div class="flex items-center px-4 py-4 border-b border-borderSubtle">
+                <i class="fa-solid fa-magnifying-glass text-textMuted mx-2"></i>
+                <input type="text" id="cmd-input" placeholder="Search drivers, vehicles, alerts, or jump to page..." class="bg-transparent border-none outline-none text-base text-white w-full placeholder-textMuted mx-2">
+                <div class="flex items-center gap-1">
+                    <span class="text-[9px] text-textMuted font-mono bg-white/5 py-1 px-1.5 rounded border border-white/10">ESC</span>
+                </div>
+            </div>
+            <div class="p-2 h-64 overflow-y-auto">
+                <div class="text-[9px] font-bold text-textMuted uppercase tracking-wider px-3 mb-2 mt-2">Pages</div>
+                <div class="px-2 py-2.5 rounded-lg hover:bg-primary/20 hover:text-primary cursor-pointer text-sm text-gray-300 flex items-center gap-3 transition-colors" onclick="toggleCommandPalette()">
+                    <i class="fa-solid fa-route w-5 text-center"></i> Live Fleet Tracking
+                </div>
+                <div class="px-2 py-2.5 rounded-lg hover:bg-primary/20 hover:text-primary cursor-pointer text-sm text-gray-300 flex items-center gap-3 transition-colors" onclick="toggleCommandPalette()">
+                    <i class="fa-solid fa-microchip w-5 text-center"></i> Driver Intelligence
+                </div>
+                <div class="px-2 py-2.5 rounded-lg hover:bg-primary/20 hover:text-primary cursor-pointer text-sm text-gray-300 flex items-center gap-3 transition-colors" onclick="toggleCommandPalette()">
+                    <i class="fa-solid fa-triangle-exclamation w-5 text-center"></i> Alerts & Incidents
+                </div>
+                <div class="text-[9px] font-bold text-textMuted uppercase tracking-wider px-3 mb-2 mt-4">Vehicles</div>
+                <div class="px-2 py-2.5 rounded-lg hover:bg-primary/20 hover:text-primary cursor-pointer text-sm text-gray-300 flex items-center justify-between transition-colors" onclick="toggleCommandPalette()">
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-car w-5 text-center"></i> MH01 AB 1234</div>
+                    <span class="text-[10px] text-secondary border border-secondary/30 bg-secondary/10 px-1.5 py-0.5 rounded">Moving</span>
+                </div>
+                <div class="px-2 py-2.5 rounded-lg hover:bg-primary/20 hover:text-primary cursor-pointer text-sm text-gray-300 flex items-center justify-between transition-colors" onclick="toggleCommandPalette()">
+                    <div class="flex items-center gap-3"><i class="fa-solid fa-car w-5 text-center"></i> GJ05 CD 8876</div>
+                    <span class="text-[10px] text-danger border border-danger/30 bg-danger/10 px-1.5 py-0.5 rounded">Offline</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Context Interactions Scripts -->
+    <script>
+        let expandedModule = null;
+        let isModuleExpanded = false;
+        
+        const pages = ['Overview', 'Live Tracking', 'Driver Intel', 'Alerts', 'Diagnostics'];
+        let currentPageIndex = 0;
+
+        function toggleModule(el, title) {
+            if (isModuleExpanded && expandedModule !== el) {
+                expandedModule.classList.remove('module-expanded');
+                expandedModule.style.zIndex = '';
+            }
+
+            if (el.classList.contains('module-expanded')) {
+                el.classList.remove('module-expanded');
+                el.style.zIndex = '';
+                document.body.classList.remove('module-focused');
+                isModuleExpanded = false;
+                expandedModule = null;
+                updateHighlights('Overview');
+            } else {
+                el.classList.add('module-expanded');
+                document.body.classList.add('module-focused');
+                isModuleExpanded = true;
+                expandedModule = el;
+                updateHighlights(title);
+            }
+        }
+
+        function updateHighlights(title) {
+            const pills = document.querySelectorAll('.nav-pill');
+            pills.forEach(p => {
+                if(p.innerText.toLowerCase() === title.toLowerCase()) {
+                    p.className = 'nav-pill px-4 py-1.5 rounded-full bg-primary/10 border border-primary/20 text-primary text-[11px] uppercase tracking-wide font-bold shadow-neon-blue';
+                } else {
+                    p.className = 'nav-pill px-4 py-1.5 rounded-full text-textMuted hover:text-white hover:bg-white/5 text-[11px] uppercase tracking-wide font-medium cursor-pointer';
+                }
+            });
+            
+            const idx = pages.findIndex(p => title.toLowerCase().includes(p.toLowerCase()));
+            if(idx !== -1) currentPageIndex = idx;
+            
+            const prev = currentPageIndex > 0 ? pages[currentPageIndex - 1] : pages[pages.length - 1];
+            const next = currentPageIndex < pages.length - 1 ? pages[currentPageIndex + 1] : pages[0];
+            
+            document.getElementById('hotspot-left-text').innerText = prev;
+            document.getElementById('hotspot-right-text').innerText = next;
+        }
+
+        function navigateEdge(direction) {
+            if (direction === 'left') {
+                currentPageIndex = currentPageIndex > 0 ? currentPageIndex - 1 : pages.length - 1;
+            } else {
+                currentPageIndex = currentPageIndex < pages.length - 1 ? currentPageIndex + 1 : 0;
+            }
+            
+            const targetPage = pages[currentPageIndex];
+            updateHighlights(targetPage);
+            
+            // Visual spatial flash effect
+            const overlay = document.createElement('div');
+            // Depending on direction, spatial transition
+            overlay.className = `fixed inset-0 z-[90] transition-transform duration-500 backdrop-blur-xl bg-[#04070e]/80 pointer-events-none transform ${direction === 'left' ? '-translate-x-full' : 'translate-x-full'}`;
+            document.body.appendChild(overlay);
+            
+            // Animate in
+            setTimeout(() => {
+                overlay.className = 'fixed inset-0 z-[90] transition-transform duration-500 backdrop-blur-xl bg-[#04070e]/80 pointer-events-none transform translate-x-0';
+            }, 50);
+            
+            // Close old module when transitioning completely
+            setTimeout(() => {
+                if(isModuleExpanded) {
+                    expandedModule.classList.remove('module-expanded');
+                    document.body.classList.remove('module-focused');
+                    isModuleExpanded = false;
+                    expandedModule = null;
+                }
+            }, 300);
+
+            // Animate out
+            setTimeout(() => {
+                overlay.className = `fixed inset-0 z-[90] transition-transform duration-500 backdrop-blur-xl bg-[#04070e]/80 pointer-events-none transform ${direction === 'left' ? 'translate-x-full' : '-translate-x-full'}`;
+            }, 550);
+            
+            setTimeout(() => { overlay.remove(); }, 1100);
+        }
+
+        function toggleCommandPalette() {
+            const cp = document.getElementById('command-palette');
+            const box = document.getElementById('cmd-palette-box');
+            if (cp.classList.contains('opacity-0')) {
+                cp.classList.remove('opacity-0', 'pointer-events-none');
+                box.classList.remove('scale-95');
+                box.classList.add('scale-100');
+                document.getElementById('cmd-input').focus();
+            } else {
+                cp.classList.add('opacity-0', 'pointer-events-none');
+                box.classList.remove('scale-100');
+                box.classList.add('scale-95');
+                document.getElementById('cmd-input').blur();
+            }
+        }
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'k' && (e.ctrlKey || e.metaKey)) {
+                e.preventDefault();
+                toggleCommandPalette();
+            }
+            if (e.key === 'Escape') {
+                const cp = document.getElementById('command-palette');
+                if (!cp.classList.contains('opacity-0')) toggleCommandPalette();
+                else if (isModuleExpanded) {
+                    expandedModule.classList.remove('module-expanded');
+                    document.body.classList.remove('module-focused');
+                    isModuleExpanded = false;
+                    expandedModule = null;
+                    updateHighlights('Overview');
+                }
+            }
+        });
+        
+        document.getElementById('command-palette').addEventListener('click', (e) => {
+            if(e.target === document.getElementById('command-palette')) {
+                toggleCommandPalette();
+            }
+        });
+
+        // Click nav pills to swap "pages" easily without reload
+        document.querySelectorAll('.nav-pill').forEach(pill => {
+            pill.addEventListener('click', (e) => {
+                const title = e.target.innerText;
+                // Add flash effect similar to edge nav
+                navigateByTitle(title);
+            });
+        });
+
+        function navigateByTitle(title) {
+            updateHighlights(title);
+            const overlay = document.createElement('div');
+            overlay.className = 'fixed inset-0 z-[90] transition-all duration-300 opacity-0 backdrop-blur-xl bg-[#04070e]/80 pointer-events-none scale-105';
+            document.body.appendChild(overlay);
+            
+            setTimeout(() => {
+                overlay.classList.remove('opacity-0', 'scale-105');
+                overlay.classList.add('opacity-100', 'scale-100');
+            }, 10);
+            
+            setTimeout(() => {
+                if(isModuleExpanded) {
+                    expandedModule.classList.remove('module-expanded');
+                    document.body.classList.remove('module-focused');
+                    isModuleExpanded = false;
+                    expandedModule = null;
+                }
+            }, 300);
+
+            setTimeout(() => {
+                overlay.classList.remove('opacity-100', 'scale-100');
+                overlay.classList.add('opacity-0', 'scale-95');
+            }, 600);
+            
+            setTimeout(() => { overlay.remove(); }, 900);
+        }
+    </script>
 </body>
 </html>
