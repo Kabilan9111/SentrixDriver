@@ -124,7 +124,28 @@
             pointer-events: none;
             filter: blur(4px);
         }
+        /* Leaflet Overrides */
+        .leaflet-container {
+            background: transparent !important;
+            font-family: inherit;
+        }
+        .custom-leaflet-popup .leaflet-popup-content-wrapper {
+            background: transparent !important;
+            box-shadow: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+        }
+        .custom-leaflet-popup .leaflet-popup-tip-container {
+            display: none !important; /* Hide default white triangle */
+        }
+        .custom-leaflet-popup .leaflet-popup-content {
+            margin: 0 !important;
+        }
+        
     </style>
+    <!-- Leaflet CSS & JS for Real Interactive Map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" crossorigin=""/>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" crossorigin=""></script>
 </head>
 <body class="flex h-screen w-screen text-sm antialiased selection:bg-primary selection:text-white">
 
@@ -436,74 +457,15 @@
                         <button class="w-7 h-7 bg-black/70 backdrop-blur border border-borderSubtle rounded flex items-center justify-center hover:bg-white/10 mt-1"><i class="fa-solid fa-draw-polygon text-[10px]"></i></button>
                     </div>
 
-                    <!-- MAP BACKGROUND (Mumbai context from prompt/image) -->
+                    <!-- MAP BACKGROUND -->
                     <div class="absolute inset-0 z-0 bg-[#04070e]">
-                        <div class="absolute inset-0 map-bg opacity-40"></div>
+                        <!-- Real Leaflet Map Container -->
+                        <div id="fleet-map" class="absolute inset-0 w-full h-full"></div>
                         
-                        <!-- Map Grid / Overlay -->
-                        <div class="absolute inset-0 bg-gradient-to-t from-base via-transparent to-base opacity-70"></div>
-                        <div class="absolute inset-0 bg-gradient-to-b from-black/80 to-transparent h-20"></div>
-                        
-                        <!-- Place Labels (Simulated) -->
-                        <span class="absolute top-[18%] left-[30%] text-[9px] text-textMuted font-mono">Goregaon</span>
-                        <span class="absolute top-[12%] left-[45%] text-[9px] text-textMuted font-mono">Andheri East</span>
-                        <span class="absolute top-[35%] left-[55%] text-[9px] text-textMuted font-mono">Powai Lake</span>
-                        <span class="absolute top-[65%] left-[65%] text-[9px] text-textMuted font-mono">Navi Mumbai</span>
-                        <span class="absolute top-[35%] left-[30%] text-[9px] text-textMuted font-mono">Thane</span>
-                        
-                        <!-- SVG Paths (Routes & Polygons) -->
-                        <svg class="absolute inset-0 w-full h-full pointer-events-none" viewBox="0 0 800 440">
-                            <!-- Blue glowing route 1 -->
-                            <path d="M 120,280 Q 200,320 280,380 L 350,400 L 450,380 L 520,320" fill="none" stroke="rgba(20,99,255,0.6)" stroke-width="2" class="drop-shadow-[0_0_8px_rgba(20,99,255,0.8)]" />
-                            <!-- Green active route 2 -->
-                            <path d="M 280,100 L 350,80 L 420,130 L 400,230 L 300,320" fill="none" stroke="rgba(0,230,118,0.5)" stroke-width="2" stroke-dasharray="4,4" class="drop-shadow-[0_0_8px_rgba(0,230,118,0.6)]" />
-                            
-                            <!-- Geofences -->
-                            <!-- Blue -->
-                            <polygon points="120,150 250,130 280,280 100,250" fill="rgba(20,99,255,0.05)" stroke="rgba(20,99,255,0.4)" stroke-width="1" stroke-dasharray="2,2"/>
-                            <!-- Purple polygon -->
-                            <polygon points="450,100 620,110 580,250 420,200" fill="rgba(168,85,247,0.05)" stroke="rgba(168,85,247,0.5)" stroke-width="1" stroke-dasharray="2,4"/>
-                            <!-- Red restricted zone polygon -->
-                            <polygon points="550,280 700,260 720,380 500,380" fill="rgba(255,59,48,0.05)" stroke="rgba(255,59,48,0.5)" stroke-width="1" stroke-dasharray="3,3"/>
-                        </svg>
-
-                        <!-- Nodes on Map -->
-                        <!-- Primary Node (Matches the popup) -->
-                        <div class="absolute top-[215px] left-[295px] z-20">
-                            <!-- Node dot -->
-                            <div class="w-3 h-3 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.9)] border-2 border-primary pulse flex items-center justify-center"></div>
-                            
-                            <!-- Tooltip Modal -->
-                            <div class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-panel/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.8)] w-[240px] p-4 text-xs z-30 transform hover:-translate-y-1 transition-transform">
-                                <div class="flex justify-between items-start mb-3 border-b border-white/5 pb-2">
-                                    <div>
-                                        <div class="font-bold text-white tracking-wide">MH01 AB 1234</div>
-                                        <div class="text-[9px] text-textMuted">Speed <span class="text-gray-300 font-mono ml-2">72 km/h</span></div>
-                                    </div>
-                                    <div class="text-[9px] text-secondary bg-secondary/10 px-1.5 py-0.5 rounded border border-secondary/20 flex items-center gap-1"><i class="fa-solid fa-arrow-right"></i> Moving</div>
-                                </div>
-                                <div class="space-y-1.5 mb-3">
-                                    <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Driver</span> <span class="text-white">Arjun Verma</span></div>
-                                    <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Battery</span> <span class="text-secondary font-mono">91%</span></div>
-                                    <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Fuel</span> <span class="text-secondary font-mono">68%</span></div>
-                                    <div class="flex items-start text-[10px]"><span class="w-12 text-textMuted shrink-0">Location</span> <span class="text-gray-300 leading-tight">Eastern Express Hwy, Mumbai</span></div>
-                                </div>
-                                <!-- Tiny car image area -->
-                                <div class="absolute right-3 top-10 w-[60px] h-10 opacity-70">
-                                    <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover rounded pointer-events-none mix-blend-screen grayscale filter">
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Other nodes -->
-                        <div class="absolute top-[80px] left-[350px] w-2.5 h-2.5 bg-secondary rounded-full shadow-[0_0_10px_rgba(0,230,118,0.5)] z-10 border border-[#04070e]"></div>
-                        <div class="absolute top-[130px] left-[520px] w-2.5 h-2.5 bg-secondary rounded-full shadow-[0_0_10px_rgba(0,230,118,0.5)] z-10 border border-[#04070e]"></div>
-                        <div class="absolute top-[380px] left-[280px] w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(20,99,255,0.5)] z-10 border border-[#04070e]"></div>
-                        <div class="absolute top-[320px] left-[520px] w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(20,99,255,0.5)] z-10 border border-[#04070e]"></div>
-                        <div class="absolute top-[400px] left-[350px] w-2.5 h-2.5 bg-primary rounded-full shadow-[0_0_10px_rgba(20,99,255,0.5)] z-10 border border-[#04070e]"></div>
-                        
-                        <!-- Offline node -->
-                        <div class="absolute top-[280px] left-[150px] w-2.5 h-2.5 bg-gray-500 rounded-full z-10 border border-[#04070e]"></div>
+                        <!-- Map Gradient Overlay (Edges) to blend light map into dark UI -->
+                        <div class="absolute inset-0 bg-gradient-to-t from-[#04070e] via-transparent to-[#04070e] opacity-80 pointer-events-none z-[400]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-r from-[#04070e]/90 via-transparent to-[#04070e]/90 opacity-80 pointer-events-none z-[400]"></div>
+                        <div class="absolute inset-0 bg-gradient-to-b from-black/60 to-transparent h-24 pointer-events-none z-[400]"></div>
                     </div>
 
                     <!-- Bottom Legend absolute -->
@@ -1253,6 +1215,169 @@
             
             setTimeout(() => { overlay.remove(); }, 900);
         }
+
+        // ----------------------------------------------------
+        // INITIALIZE REAL LEAFLET MAP
+        // ----------------------------------------------------
+        document.addEventListener('DOMContentLoaded', () => {
+            // API KEY SETUP
+            // Paste your real MapTiler API Key below. Raw HTML + Live Server doesn't support .env directly.
+            const MAPTILER_API_KEY = "dO5y3HaT2igqIgsQYWbz";
+            
+            // Initialize map with custom styling flags removed (zoomControl disabled so we can use custom buttons or rely strictly on wheel/dblclick)
+            const map = L.map('fleet-map', {
+                center: [19.0760, 72.8777], // Mumbai Center
+                zoom: 12,
+                zoomControl: false,
+                attributionControl: false
+            });
+
+            /*
+             * MAP STYLE CONFIGURATION
+             * You can change the map style here. 
+             * Examples: 'streets', 'basic-v2', 'satellite', 'darkmatter'
+             */
+            // MapTiler Basic v2 - A light, clear logistics-style map that will visually blend via layer gradients
+            L.tileLayer(`https://api.maptiler.com/maps/streets/{z}/{x}/{y}.png?key=${MAPTILER_API_KEY}`, {
+                maxZoom: 19
+            }).addTo(map);
+
+            /*
+             * REAL-TIME GPS DATA INJECTION
+             * Replace these dummy coordinate arrays with real GPS data streams from your backend later.
+             */
+            // Add Glowing Route Line 1
+            const route1 = [
+                [19.0600, 72.8500],
+                [19.0700, 72.8700],
+                [19.0900, 72.8900],
+                [19.1200, 72.9100]
+            ];
+            L.polyline(route1, {
+                color: '#1463FF', 
+                weight: 4, 
+                opacity: 0.8,
+                className: 'drop-shadow-[0_0_8px_rgba(20,99,255,0.8)]'
+            }).addTo(map);
+
+            // Add Active Route Line 2 (Dashed)
+            const route2 = [
+                [19.0500, 72.9000],
+                [19.0400, 72.9200],
+                [19.0550, 72.9300],
+                [19.0750, 72.9200]
+            ];
+            L.polyline(route2, {
+                color: '#00E676', 
+                weight: 3, 
+                opacity: 0.7, 
+                dashArray: '5, 8',
+                className: 'drop-shadow-[0_0_8px_rgba(0,230,118,0.6)]'
+            }).addTo(map);
+
+            // Add Geofence (Blue)
+            const geofence = [
+                [19.0400, 72.8400],
+                [19.0600, 72.8300],
+                [19.0800, 72.8600],
+                [19.0500, 72.8700]
+            ];
+            L.polygon(geofence, {
+                color: '#1463FF',
+                weight: 2,
+                dashArray: '4, 4',
+                fillColor: '#1463FF',
+                fillOpacity: 0.05
+            }).addTo(map);
+
+            // Add Restricted Zone (Red)
+            const restrictedZone = [
+                [19.1000, 72.9200],
+                [19.1200, 72.9100],
+                [19.1300, 72.9400],
+                [19.1100, 72.9500]
+            ];
+            L.polygon(restrictedZone, {
+                color: '#FF3B30',
+                weight: 2,
+                dashArray: '4, 4',
+                fillColor: '#FF3B30',
+                fillOpacity: 0.05
+            }).addTo(map);
+
+            // Custom Leaflet Icons mapped to dark futuristic pulses
+            const movingIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: '<div class="w-3 h-3 bg-white rounded-full shadow-[0_0_15px_rgba(255,255,255,0.9)] border-2 border-primary pulse flex items-center justify-center"></div>',
+                iconSize: [12, 12],
+                iconAnchor: [6, 6]
+            });
+
+            const stableNodeIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: '<div class="w-2.5 h-2.5 bg-secondary rounded-full shadow-[0_0_10px_rgba(0,230,118,0.5)] border border-[#04070e]"></div>',
+                iconSize: [10, 10],
+                iconAnchor: [5, 5]
+            });
+
+            const offlineNodeIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: '<div class="w-2.5 h-2.5 bg-gray-500 rounded-full border border-[#04070e]"></div>',
+                iconSize: [10, 10],
+                iconAnchor: [5, 5]
+            });
+
+            const popupContent = `
+                <div class="bg-panel/95 backdrop-blur-xl border border-white/10 rounded-lg shadow-[0_10px_30px_rgba(0,0,0,0.8)] w-[240px] p-4 text-xs">
+                    <div class="flex justify-between items-start mb-3 border-b border-white/5 pb-2">
+                        <div>
+                            <div class="font-bold text-white tracking-wide">MH01 AB 1234</div>
+                            <div class="text-[9px] text-textMuted">Speed <span class="text-gray-300 font-mono ml-2">72 km/h</span></div>
+                        </div>
+                        <div class="text-[9px] text-secondary bg-secondary/10 px-1.5 py-0.5 rounded border border-secondary/20 flex items-center gap-1"><i class="fa-solid fa-arrow-right"></i> Moving</div>
+                    </div>
+                    <div class="space-y-1.5 mb-3">
+                        <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Driver</span> <span class="text-white">Arjun Verma</span></div>
+                        <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Battery</span> <span class="text-secondary font-mono">91%</span></div>
+                        <div class="flex items-center text-[10px]"><span class="w-12 text-textMuted">Fuel</span> <span class="text-secondary font-mono">68%</span></div>
+                        <div class="flex items-start text-[10px]"><span class="w-12 text-textMuted shrink-0">Location</span> <span class="text-gray-300 leading-tight">Eastern Express Hwy, Mumbai</span></div>
+                    </div>
+                    <div class="absolute right-3 top-10 w-[60px] h-10 opacity-70">
+                        <img src="https://images.unsplash.com/photo-1549399542-7e3f8b79c341?auto=format&fit=crop&q=80&w=200" class="w-full h-full object-cover rounded pointer-events-none mix-blend-screen grayscale filter" alt="vehicle">
+                    </div>
+                </div>
+            `;
+
+            /*
+             * LIVE VEHICLE DATA INJECTION
+             * Update the lat/lng dynamically via WebSockets or API events for live markers.
+             * Example: activeMarker.setLatLng([newLat, newLng]);
+             */
+            // Active glowing vehicle
+            const activeMarker = L.marker([19.0900, 72.8900], { icon: movingIcon }).addTo(map);
+            
+            // Adjust Leaflet popup styling override to allow Tailwind custom raw HTML to shine
+            activeMarker.bindPopup(popupContent, {
+                className: 'custom-leaflet-popup',
+                minWidth: 240,
+                closeButton: false
+            });
+            activeMarker.openPopup();
+
+            // Other map nodes
+            L.marker([19.0550, 72.9300], { icon: stableNodeIcon }).addTo(map);
+            L.marker([19.0400, 72.8500], { icon: stableNodeIcon }).addTo(map);
+            L.marker([19.1100, 72.8400], { icon: offlineNodeIcon }).addTo(map);
+
+            // Re-render map tiles correctly when module animation finishes
+            // (fixes Leaflet gray-box artifact on transform scaling)
+            const mapModule = document.querySelector(".module-card[onclick*='Live Tracking']");
+            if (mapModule) {
+                mapModule.addEventListener('transitionend', () => {
+                    map.invalidateSize();
+                });
+            }
+        });
     </script>
 </body>
 </html>
